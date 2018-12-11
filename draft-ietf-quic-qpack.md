@@ -852,9 +852,9 @@ Where TotalNumberOfInserts is the total number of inserts into the decoder's
 dynamic table.  This encoding limits the length of the prefix on long-lived
 connections.
 
-For example, if the dynamic table is 100 bytes, then MaxEntries will be 3.  If a
-decoder has received 10 inserts, then an encoded value of 3 indicates that the
-InsertCount is 9 for the header block.
+For example, if the dynamic table is 100 bytes, then the Insert Count will be
+encoded modulo 6.  If a decoder has received 10 inserts, then an encoded value
+of 3 indicates that the InsertCount is 9 for the header block.
 
 #### Base
 
@@ -868,7 +868,7 @@ to the Insert Count to determine the value of the Base.  A sign bit of 1
 indicates that the Base is less than the Insert Count.  That is:
 
 ~~~
-   if Sign == 0:
+   if S == 0:
       Base = InsertCount + DeltaBase
    else:
       Base = InsertCount - DeltaBase - 1
@@ -890,8 +890,8 @@ A header block that does not reference the dynamic table can use any value for
 Base; setting both Insert Count and Delta Base to zero is the most efficient
 encoding.
 
-For example, with an InsertCount of 9, a decoder receives a Sign of 1 and a
-Delta Base of 2.  This sets the base to 6 and enables post-base indexing for
+For example, with an Insert Count of 9, a decoder receives a S bit of 1 and a
+Delta Base of 2.  This sets the Base to 6 and enables post-base indexing for
 three entries.  In this example, a regular index of 1 refers to the 5th entry
 that was added to the table; a post-base index of 1 refers to the 8th entry.
 
@@ -911,11 +911,11 @@ decoded header list, as described in Section 3.2 of [RFC7541].
 {: title="Indexed Header Field"}
 
 If the entry is in the static table, or in the dynamic table with an absolute
-index smaller than the Base, this representation starts with the '1' 1-bit
-pattern, followed by the `S` bit indicating whether the reference is into the
-static (S=1) or dynamic (S=0) table. Finally, the relative index of the matching
-header field is represented as an integer with a 6-bit prefix (see Section 5.1
-of [RFC7541]).
+index less than the Base, this representation starts with the '1' 1-bit pattern,
+followed by the `S` bit indicating whether the reference is into the static
+(S=1) or dynamic (S=0) table. Finally, the relative index of the matching header
+field is represented as an integer with a 6-bit prefix (see Section 5.1 of
+[RFC7541]).
 
 
 ### Indexed Header Field With Post-Base Index
