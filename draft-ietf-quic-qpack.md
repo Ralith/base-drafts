@@ -841,7 +841,7 @@ The decoder reconstructs the Insert Count using the following algorithm:
       if CurrentWrapped >= InsertCount + MaxEntries:
          # Insert Count wrapped around 1 extra time
          InsertCount += 2 * MaxEntries
-      else if CurrentWrapped + MaxEntries < InsertCount
+      else if CurrentWrapped + MaxEntries < InsertCount:
          # Decoder wrapped around 1 extra time
          CurrentWrapped += 2 * MaxEntries
 
